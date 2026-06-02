@@ -1,58 +1,71 @@
-# Linux TrackIR 5 for Arma Reforger on Proton
+# 🛰️ TrackIR 5 for Arma Reforger on Linux / Proton
 
-Community setup notes and helper scripts for using a NaturalPoint TrackIR 5 kit
-with Arma Reforger on Linux through Steam/Proton.
+Use a **NaturalPoint TrackIR 5** camera with **Arma Reforger** on Linux through
+Steam/Proton.
 
-This repo packages a working LinuxTrack + Wine bridge setup:
+This project packages the LinuxTrack + Proton bridge setup that makes Arma
+Reforger see TrackIR as a normal NaturalPoint `NPClient64.dll` device.
 
-- TrackIR 5 USB access through udev.
-- LinuxTrack built from the maintained exuvo fork.
-- A patched 64-bit `NPClient64.dll` Wine bridge for Proton games.
-- Bridge-level F9/F10 recenter and pause support.
-- TrackIR 5 pause LED feedback.
-- Arma Reforger app ID/profile support.
+## ✨ What This Does
 
-It does not redistribute NaturalPoint firmware, the TrackIR Windows installer,
-or proprietary NaturalPoint DLLs. You must provide/download the official
-TrackIR installer yourself.
+- Builds LinuxTrack from the maintained `exuvo/linuxtrack` fork.
+- Installs TrackIR 5 USB permissions through a udev rule.
+- Adds an Arma Reforger LinuxTrack profile and NaturalPoint game ID entry.
+- Builds and installs a Proton-compatible `NPClient64.dll` / `NPClient.dll`.
+- Adds bridge-level recenter and pause/resume control.
+- Mirrors pause state to the TrackIR 5 status LED, matching the familiar
+  Windows TrackIR behavior.
 
-## Tested Setup
+## 🚫 What This Does Not Do
 
-- TrackIR 5 camera: USB ID `131d:0158`
-- TrackClip Pro
-- Arma Reforger Steam app ID: `1874880`
-- Arma Reforger NaturalPoint profile ID observed in-game: `8310`
-- Proton prefix:
-  `~/.local/share/Steam/steamapps/compatdata/1874880/pfx`
-- Game directory:
-  `~/.local/share/Steam/steamapps/common/Arma Reforger`
-- Linux desktop: Cinnamon/X11
+- It does not include NaturalPoint firmware, NaturalPoint software, or
+  proprietary NaturalPoint DLLs.
+- It does not require a Steam launch option for TrackIR.
 
-Other desktops should work for TrackIR itself, but global hotkeys may need a
-different binding method.
+## ✅ Tested Setup
 
-## Quick Start
+| Item | Value |
+| --- | --- |
+| Game | Arma Reforger |
+| Steam app ID | `1874880` |
+| NaturalPoint profile ID observed | `8310` |
+| TrackIR camera | TrackIR 5, USB ID `131d:0158` |
+| Clip | TrackClip Pro |
+| Proton prefix | `~/.local/share/Steam/steamapps/compatdata/1874880/pfx` |
+| Game directory | `~/.local/share/Steam/steamapps/common/Arma Reforger` |
+| Desktop tested | Cinnamon/X11 |
 
-Install dependencies. On Debian/Ubuntu-like systems:
+Other Linux desktops should work, but desktop-level shortcut setup may differ.
+
+## 📦 Install
+
+Install build dependencies first. On Debian/Ubuntu-like systems:
 
 ```bash
 sudo apt install git build-essential autoconf automake libtool pkg-config \
   libusb-1.0-0-dev wine-staging-dev wine mono-utils
 ```
 
-Clone and run the setup:
+Clone this repo:
 
 ```bash
 git clone https://github.com/datalorians/linux-proton-trackir5-armareforger.git
 cd linux-proton-trackir5-armareforger
+```
+
+Build/install LinuxTrack and install the TrackIR 5 udev rule:
+
+```bash
 ./scripts/install-linuxtrack.sh
 ./scripts/install-udev-rule.sh
 ```
 
-Log out/in or replug the TrackIR after installing the udev rule.
+Replug the TrackIR camera or log out/in after installing the udev rule.
 
-Extract/install firmware and game data from the official TrackIR 5 Windows
-installer. Then install the Arma Reforger profile and bridge:
+LinuxTrack still needs the firmware/game data from the official TrackIR 5
+Windows installer.
+
+Install the Arma Reforger profile and Proton bridge:
 
 ```bash
 ./scripts/install-profile.sh
@@ -60,73 +73,108 @@ installer. Then install the Arma Reforger profile and bridge:
 ./scripts/install-arma-reforger-bridge.sh
 ```
 
-Install helper commands and optional Cinnamon hotkeys:
+Install helper commands:
 
 ```bash
 ./scripts/install-helpers.sh
+```
+
+Optional Cinnamon/X11 shortcut installer:
+
+```bash
 ./scripts/install-cinnamon-hotkeys.sh
 ```
 
-Launch Arma Reforger through Steam, enable TrackIR in the game settings, and
-increase `TrackIR Freelook Sensitivity` if movement is tiny.
+## 🎮 Steam Setup
 
-## In-Game Settings
+TrackIR starts when Arma Reforger loads the installed `NPClient64.dll`, so
+TrackIR itself does **not** need a Steam launch option.
 
-Arma Reforger has its own TrackIR scaling. If LinuxTrack works but the in-game
-view only moves a few degrees, this is usually the setting to fix.
+Launch the game normally through Steam, then enable TrackIR in Arma Reforger's
+settings.
 
-Look for these in Arma Reforger settings:
+## 👀 In-Game TrackIR Settings
+
+Arma Reforger has its own TrackIR scaling. If LinuxTrack is working but the
+view only moves a few degrees, the in-game sensitivity is usually the fix.
+
+Recommended settings to check:
 
 - `TrackIR Enable`: on
 - `TrackIR Freelook Enable`: on
-- `TrackIR Freelook Sensitivity`: increase until the range feels right
-- `TrackIR While ADS`: optional
-- `TrackIR Freelook Deadzone ADS`: lower/zero for testing
+- `TrackIR Freelook Sensitivity`: increase until range feels natural
+- `TrackIR While ADS`: personal preference
+- `TrackIR Freelook Deadzone ADS`: lower or zero for testing
 - `TrackIR Leaning Active Yaw Range`: widen if leaning feels constrained
 
-## Hotkeys
+## ⌨️ Recenter and Pause Controls
 
-- `F9`: recenter view
-- `F10`: pause/resume tracking and switch the TrackIR status LED to the paused
-  color
+The helper commands are:
 
-Pause freezes the last pose returned to the game. It does not suspend the
-LinuxTrack camera service.
+```bash
+trackir-linux-center
+trackir-linux-toggle
+trackir-linux-pause
+trackir-linux-resume
+```
 
-## Steam Launch Option
+The optional Cinnamon installer binds these to the classic TrackIR-style keys:
 
-TrackIR starts on demand when the game loads `NPClient64.dll`, so you do not
-need a special Steam launch option for TrackIR.
+- `F9` for recenter
+- `F10` for pause/resume
 
-For debug logging, temporarily launch with:
+Those keys are not a special project feature; they are simply the familiar
+Windows TrackIR defaults. You can bind any keys you want in your desktop
+environment, keyboard utility, Stream Deck, joystick macro tool, or window
+manager.
+
+For example, bind:
+
+```text
+your preferred recenter key -> ~/.local/bin/trackir-linux-center
+your preferred pause key    -> ~/.local/bin/trackir-linux-toggle
+```
+
+Pause freezes the last pose returned to the game and turns the TrackIR status
+LED to the paused color. It does not shut down the camera service.
+
+## 🧯 Troubleshooting
+
+Debug launch option:
 
 ```bash
 LINUXTRACK_DBG=w %command%
 ```
 
-The bridge writes `NPClient.log` in the game directory.
+Debug log:
 
-## Rollback
+```text
+~/.local/share/Steam/steamapps/common/Arma Reforger/NPClient.log
+```
 
-Run:
+Rollback the installed bridge:
 
 ```bash
 ./scripts/rollback-bridge.sh
 ```
 
-This removes the staged `NPClient*.dll` files and deletes the NaturalPoint
-registry path from the Arma Reforger Proton prefix.
+See [Notes](docs/notes.md) for observed bridge calls and local behavior.
 
-## Safety Notes
+## 🤖 AI Disclosure
 
-- Do not commit extracted firmware or proprietary NaturalPoint DLLs.
-- Re-run `scripts/install-arma-reforger-bridge.sh` after changing Proton
-  prefixes or moving the Steam library.
-- Stop Arma Reforger before editing LinuxTrack profiles; LinuxTrack may save
-  profile state on exit.
+This package was developed with assistance from OpenAI's Codex/ChatGPT. The
+scripts, patches, and documentation were reviewed and tested locally before
+publication, but they are community-maintained and provided as-is.
 
-## License
+AI disclosure is separate from licensing: the disclosure explains how the work
+was produced, while the license explains what rights you have to use and modify
+the code.
 
-Scripts and helper source in this repository are MIT licensed. LinuxTrack is a
-separate project with its own license. NaturalPoint firmware/software is owned
-by NaturalPoint and is not included here.
+## 📄 License
+
+Repository scripts, helper source, and documentation are released under the
+[MIT License](LICENSE).
+
+LinuxTrack is a separate project with its own license. NaturalPoint firmware,
+software, and trademarks belong to their respective owners and are not included
+in this repository.
