@@ -10,6 +10,7 @@ bridge="${LINUXTRACK_BRIDGE:-$prefix/wine/NPClient64.dll.so}"
 
 if [[ ! -f "$bridge" ]]; then
   echo "Bridge not found: $bridge" >&2
+  echo "Run scripts/build-wine-bridge.sh first." >&2
   exit 1
 fi
 
@@ -20,7 +21,7 @@ fi
 
 if [[ ! -d "$pfx" ]]; then
   echo "Arma Reforger Proton prefix not found: $pfx" >&2
-  echo "Launch Arma Reforger once through Steam, then retry." >&2
+  echo "Launch Arma Reforger once through Steam, then rerun this script." >&2
   exit 1
 fi
 
@@ -30,9 +31,10 @@ cp "$bridge" "$pfx/drive_c/linuxtrack/NPClient.dll"
 cp "$bridge" "$game_dir/NPClient64.dll"
 cp "$bridge" "$game_dir/NPClient.dll"
 
-WINEPREFIX="$pfx" WINEDEBUG=-all wine reg add \
+WINEPREFIX="$pfx" wine reg add \
   'HKCU\Software\NaturalPoint\NATURALPOINT\NPClient Location' \
   /v Path /t REG_SZ /d 'C:\linuxtrack' /f
 
-echo "Staged untested Arma Reforger TrackIR bridge."
-echo "Next: enable TrackIR in Arma Reforger settings."
+echo "Installed NPClient bridge for Arma Reforger."
+echo "Game: $game_dir"
+echo "Prefix: $pfx"
