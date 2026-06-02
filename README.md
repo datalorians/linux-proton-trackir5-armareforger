@@ -11,8 +11,6 @@ This repo packages a working LinuxTrack + Wine bridge setup:
 - Bridge-level F9/F10 recenter and pause support.
 - TrackIR 5 pause LED feedback.
 - Arma Reforger app ID/profile support.
-- Optional X-55 HOTAS to Xbox 360 gamepad adapter for Arma Reforger helicopter
-  controls.
 
 It does not redistribute NaturalPoint firmware, the TrackIR Windows installer,
 or proprietary NaturalPoint DLLs. You must provide/download the official
@@ -100,30 +98,6 @@ LinuxTrack camera service.
 TrackIR starts on demand when the game loads `NPClient64.dll`, so you do not
 need a special Steam launch option for TrackIR.
 
-For the optional X-55 adapter, use this launch option:
-
-```bash
-bash -lc '$HOME/.local/bin/x55-arma-reforger-virtual-gamepad & cleanup(){ $HOME/.local/bin/x55-arma-reforger-stop-virtual-gamepad; }; trap cleanup EXIT; "$@"; rc=$?; cleanup; exit $rc' -- %command%
-```
-
-The adapter grabs the real X-55 stick/throttle and exposes one virtual
-`Microsoft X-Box 360 pad`. This avoids Arma Reforger applying the built-in X56
-Rhino preset to the X-55's different two-device axis layout.
-
-Default helicopter mapping:
-
-- X-55 stick X/Y: gamepad right stick X/Y for cyclic
-- X-55 twist: gamepad left stick X for anti-torque/yaw
-- X-55 split throttle average: gamepad left stick Y for collective
-
-If an axis is backwards, prefix the launch option with one of these variables:
-
-```bash
-X55_REFORGER_INVERT_PITCH=0
-X55_REFORGER_INVERT_COLLECTIVE=0
-X55_REFORGER_INVERT_YAW=1
-```
-
 For debug logging, temporarily launch with:
 
 ```bash
@@ -142,12 +116,6 @@ Run:
 
 This removes the staged `NPClient*.dll` files and deletes the NaturalPoint
 registry path from the Arma Reforger Proton prefix.
-
-Stop the X-55 virtual gamepad manually with:
-
-```bash
-x55-arma-reforger-stop-virtual-gamepad
-```
 
 ## Safety Notes
 

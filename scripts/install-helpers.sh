@@ -15,6 +15,5 @@ gcc \
   -llinuxtrack -lltr -ldl -pthread
 
 install -m 0755 "$repo_root"/bin/trackir-linux-* "$HOME/.local/bin/"
-install -m 0755 "$repo_root"/bin/x55-arma-reforger-* "$HOME/.local/bin/"
 
-echo "Installed TrackIR and X-55 helper commands into $HOME/.local/bin"
+echo "Installed TrackIR helper commands into $HOME/.local/bin"
